@@ -11,7 +11,7 @@ configuration = load_config('ssm',environment)
 SSM variable key must have format: 
 /$environment/$section 
 and value in json format
-Ej:
+
 Key | Value
 --- | ---
 /pre/ddbb | {"host":"localhost","port":3306,"user":"root","password":"changeit"}
@@ -20,7 +20,7 @@ Key | Value
 configuration = load_config('file',environment, file_name)
 ```
 File expected in standard INI file structure. 
-Ej:
+
 ```
 [ddbb]
 host=localhost
@@ -34,7 +34,7 @@ configuration = load_config('env',environment, projectname)
 ```
 Variables should have the following format:
 $projectname_$environemnt_$sectionname
-Ej:
+
 ```
 MYPROJECT_PRO_DDBB_HOST=localhost
 MYPROJECT_PRO_DDBB_PORT=3306
