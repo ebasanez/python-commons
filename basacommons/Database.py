@@ -6,12 +6,13 @@ from basacommons.SingletonMeta import SingletonMeta
 class Database(metaclass = SingletonMeta):
 
     def __init__(self, config):
-        self.host       = config.get('ddbb','host')
-        self.port       = config.getint('ddbb','port')
-        self.dbname     = config.get('ddbb','name')
-        self.username   = config.get('ddbb','username')
-        self.password   = config.get('ddbb','password')
-        self.conn       = None
+        self.host               = config.get('ddbb','host')
+        self.port               = config.getint('ddbb','port')
+        self.dbname             = config.get('ddbb','name')
+        self.username           = config.get('ddbb','username')
+        self.password           = config.get('ddbb','password')
+        self.allow_management   = config.getboolean('ddbb','allow-management', fallback = False)
+        self.conn               = None
 
     def open_connection(self):
         try:
@@ -31,11 +32,12 @@ class Database(metaclass = SingletonMeta):
             logging.debug('Connection opened successfully.')
 
     def run_query(self, query, args = None, page = None):
+        self.__checkQueryIsAllowed(query)
         """Execute SQL query."""
         try:
             self.open_connection()
             with self.conn.cursor() as cur:
-                if 'SELECT' in query:
+                if query.upper().startswith('SELECT'):
                     records = []
                     query = query + self.__pageToQuery(page)
                     cur.execute(query, args)
@@ -44,6 +46,12 @@ class Database(metaclass = SingletonMeta):
                         records.append(row)
                     cur.close()
                     return records
+                if query.upper().startswith('INSERT'):
+                    result = cur.execute(query, args)
+                    self.conn.commit()
+                    last_inserted_id = cur.lastrowid    
+                    cur.close()
+                    return last_inserted_id
                 else:
                     result = cur.execute(query, args)
                     self.conn.commit()
@@ -58,6 +66,13 @@ class Database(metaclass = SingletonMeta):
                 self.conn = None
                 logging.debug('Database connection closed.')            
 
+    def __checkQueryIsAllowed(self, query):
+        if self.allow_management:
+            return
+        stripped_query = query.upper().lstrip()
+        if not (stripped_query.startswith('SELECT') or stripped_query.startswith('UPDATE') or stripped_query.startswith('INSERT') or stripped_query.startswith('DELETE')):
+            logging.warning('Query \''+query+'\' is not allowed in non-management mode. To allow management mode, set coniguration value ddbb.allow-management = True')
+            raise Exception(f'Query \'{query}\' is not allowed in non-management mode. To allow management mode, set coniguration value ddbb.allow-management = True')
 
     def __pageToQuery(self, page):
         if not page:

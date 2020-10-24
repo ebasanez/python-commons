@@ -14,7 +14,7 @@ and value in json format
 
 Key | Value
 --- | ---
-/pre/ddbb | {"host":"localhost","port":3306,"user":"root","password":"changeit"}
+/pre/ddbb | {"host":"localhost","port":3306,"username":"root","password":"changeit"}
 #### Local file
 ```python
 configuration = load_config('file',environment, file_name)
@@ -25,7 +25,7 @@ File expected in standard INI file structure.
 [ddbb]
 host=localhost
 port=3306
-user=root
+username=root
 password=changeit
 ```
 #### Environment variables.
@@ -38,7 +38,7 @@ $projectname_$environemnt_$sectionname
 ```
 MYPROJECT_PRO_DDBB_HOST=localhost
 MYPROJECT_PRO_DDBB_PORT=3306
-MYPROJECT_PRO_DDBB_USER=root
+MYPROJECT_PRO_DDBB_USERNAME=root
 MYPROJECT_PRO_DDBB_PASSWORD=changeit
 ```
 ### database.py
