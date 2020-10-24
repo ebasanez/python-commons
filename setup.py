@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'Readme.md'), encoding='utf-8') as f:
 
 setup(
     name='basacommons',
-    version='0.0.9',
+    version='0.0.10',
     packages=find_packages(),
     python_requires='>=3.7',
     author='Enrique Basañez Mercader',
