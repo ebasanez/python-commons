@@ -2,7 +2,7 @@ import pytest,pymysql
 import os, sys
 import configparser
 sys.path.append(os.path.join(sys.path[0],'..'))
-from basacommons.database import Database
+from basacommons.Database import Database
 
 def test_not_allowed_query():
     ### Arrange

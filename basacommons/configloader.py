@@ -3,10 +3,9 @@ import boto3
 import configparser
 import json
 
-
-def load_config(source_type, environment = None, project = 'BASA', file_name = None):
+def load_config(source_type, environment = None, project = 'BASA', file_name = None, region = None):
     if source_type == 'ssm' and environment:
-        return load_config_from_ssm(environment)
+        return load_config_from_ssm(environment, region)
 
     if source_type == 'env' and environment:
         return load_config_from_env(project, environment) 
@@ -16,10 +15,10 @@ def load_config(source_type, environment = None, project = 'BASA', file_name = N
 
     raise Exception(f'No confguration loader source defined for {source_type}') 
 
-def load_config_from_ssm(environment):
+def load_config_from_ssm(environment, region):
     configuration = configparser.ConfigParser()
     add_environment(configuration,environment)
-    client = boto3.client('ssm')  
+    client = boto3.client('ssm', region_name = region)  
     param_details = client.get_parameters_by_path(Path="/"+environment+"/", Recursive = True)
     
     if 'Parameters' in param_details and len(param_details.get('Parameters')) > 0:

@@ -4,7 +4,7 @@ import logging
 
 sys.path.append(os.path.join(sys.path[0],'../'))
 from basacommons import configloader
-from basacommons.database import Database, Page
+from basacommons.Database import Database, Page
 
 #Load test configuration properties and ddbb
 config = configloader.load_config('ssm','test')
