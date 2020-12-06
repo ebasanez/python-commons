@@ -8,7 +8,7 @@ from basacommons.Database import Database, Page
 
 #Load test configuration properties and ddbb
 config = configloader.load_config('ssm','test')
-subject = Database(config)
+subject = Database.ofConfiguration(config)
 
 @pytest.fixture(scope="session", autouse=True)
 def pytest_configure():

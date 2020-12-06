@@ -3,8 +3,12 @@ This project joins some useful scripts designed to speed up project development.
 Main scripts are:
 
 ## configuration.py
+
+This script generates a configparser.configuration instance.
+
 Configuration load from different sources:
 ### AWS Systems manager parameter store
+* Given that AWS CLI is configured and credentials loaded
 ```python
 configuration = load_config('ssm',environment)
 ```
@@ -41,10 +45,10 @@ MYPROJECT_PRO_DDBB_PORT=3306
 MYPROJECT_PRO_DDBB_USERNAME=root
 MYPROJECT_PRO_DDBB_PASSWORD=changeit
 ```
-### database.py
+### Database.py
 Database connection and query execution
 ```python
-database = database(configuration)
+database = Database.ofConfiguration(configuration)
 ```
 To execute query, use method *Database.run_query*
 ```python
@@ -54,7 +58,7 @@ Pagination is supported using class *database.Page*:
 ```python
 page_number = 1
 page_size = 50
-page = database.Page(page_number, page_size)
+page = Database.Page(page_number, page_size)
 records = database.run_query('SELECT * FROM table WHERE mycolumn = %s AND myothercolumn = '%s', ('value1', 'value2' ), page)
 ```
 ### alerts.py

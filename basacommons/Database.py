@@ -3,15 +3,29 @@ import logging
 import sys
 from basacommons.SingletonMeta import SingletonMeta
 
-class Database(metaclass = SingletonMeta):
+class Database(object):
+    
+    @classmethod
+    def ofConfiguration(cls, config):
+        host                = config.get('ddbb','host')
+        port                = config.getint('ddbb','port')
+        dbname              = config.get('ddbb','name')
+        username            = config.get('ddbb','username')
+        password            = config.get('ddbb','password')
+        allow_management    = config.getboolean('ddbb','allow-management', fallback = False)
+        is_singleton        = config.getboolean('ddbb', 'singleton', fallback = True)
+        if is_singleton: 
+            return SingletonDatabase(host, port, dbname, username, password, allow_management)
+        else:
+            return Database(host, port, dbname, username, password, allow_management)
 
-    def __init__(self, config):
-        self.host               = config.get('ddbb','host')
-        self.port               = config.getint('ddbb','port')
-        self.dbname             = config.get('ddbb','name')
-        self.username           = config.get('ddbb','username')
-        self.password           = config.get('ddbb','password')
-        self.allow_management   = config.getboolean('ddbb','allow-management', fallback = False)
+    def __init__(self, host, port, dbname, username, password, allow_management = False):
+        self.host               = host
+        self.port               = port
+        self.dbname             = dbname
+        self.username           = username
+        self.password           = password
+        self.allow_management   = allow_management
         self.conn               = None
 
     def open_connection(self):
@@ -87,6 +101,14 @@ class Database(metaclass = SingletonMeta):
             if page.page_number > 0:
                 result = result + f' OFFSET {int(page.page_size * page.page_number)} '
         return result    
+
+
+class SingletonDatabase(Database, metaclass = SingletonMeta):
+    '''
+    Singleton class extengind Database for mono thread environments
+    '''
+    def __init__(self, host, port, dbname, username, password, allow_management = False):
+        Database.__init__(self,host, port, dbname, username, password, allow_management)
 
 class Page:
     '''
